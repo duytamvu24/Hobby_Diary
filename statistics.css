@@ -1,0 +1,21 @@
+.statistics{
+    padding: 10px 5px 5px 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 40px;
+}
+
+.post_count{
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-style: bold;
+}
+.post_per_month{
+    font-size: 15px;
+    margin-bottom: 80px;
+}
+

@@ -1,0 +1,26 @@
+.settings_view{
+    background-color: blue;
+    display: flex;
+    flex-direction: column;
+}
+
+.save_backup{
+    height: 100px;
+    width: 100%;
+    background-color: aliceblue;
+}
+
+.load_backup{
+    height: 100px;
+    width: 100%;
+    background-color: aliceblue;
+}
+
+.settings_back{
+    background-color: aqua;
+    height: 100px;
+    width: 100%;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

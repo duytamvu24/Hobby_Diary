@@ -1,0 +1,79 @@
+.opened_post{
+    background-color: rgb(238, 185, 222);
+    display: flex;
+    flex-direction: column;
+}
+
+.head{
+    flex: 1;
+    background-color: aqua;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.menu{
+    /*background-color: bisque;*/
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.post_body{
+    background-color: rgb(186, 245, 255);
+    display: flex;
+    flex-direction: column;
+    padding: 5px 4px 5px 4px;
+}
+
+.body_head{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.opened_post_back_button{
+    margin-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 20px;
+    background-color: azure;
+    cursor: pointer;
+}
+
+.opened_post_hobby{
+    margin-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 25px;
+}
+
+.edit_post{
+    background-image: url('./images/edit.png');
+    width: 100%;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    margin-bottom: 3px;
+}
+
+.delete_post{
+    background-image: url('./images/delete.png');
+    width: 100%;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    margin-bottom: 5px;
+}
+
+.opened_post_back_button{
+    background-image: url('./images/back.png');
+    width: 100%;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-color: transparent;
+    margin-bottom: 5px;
+}

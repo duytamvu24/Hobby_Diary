@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hobby Diary</title>
+        <link rel="stylesheet" href="menu.css">  <!--Das ist der wichtige Teil -->
+        <link rel="stylesheet" href="post_feed.css">
+        <link rel="stylesheet" href="create_post.css">
+        <link rel="stylesheet" href="settings.css">
+        <link rel="stylesheet" href="statistics.css">
+    </head>
+    <body style="background-color: rgba(190, 245, 240, 0.774);">
+        <div class="app" id="app" style="display: block;">
+            <div class="top">
+                <div class="menu">
+                    <select class="hobbyDropdown" id="hobbyDropdown" style="width: 100px;">
+                        <option value="">--Hobby--</option>
+                        </select>
+                    <div>
+                        <label for="activateOption">Nur Einträge vom Tag</label>
+                        <input class="box_show_only_date" type="checkbox" id="box_show_only_date" name="box_show_only_date" checked>
+                    </div>
+                    <div alt="calender_icon" class="calender_icon" id="calendarIcon" style="background-image: url('./images/calender_icon.jpg');"></div>
+                    
+                    <!-- Verstecktes Date-Picker-Input -->
+                    <input type="date" id="calendarPicker" style="display: none;">
+                </div>
+                <div class="days">
+                    <div class="day">
+                        <div>Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                    <div class="day">
+                        <div>Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                    <div class="day">
+                        <div>Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                    <div class="day">
+                        <div>Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                    <div class="day">
+                        <div>Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                </div>
+            </div>
+            <div class="posts" >
+            </div>
+            
+            
+        </div>
+        <div class="bottom" id="bottom">
+            <div class="add_post" id="bottom_add">+</div>
+            <div class="bottom_symbol" id="calenderView" style="background-image: url('./images/diary.jpg');"></div>
+            <div class="bottom_symbol" id="calendarIcon2" style="background-image: url('./images/calender_icon.jpg');"></div>
+            <!--<div class="add_post" id="bottom_add">Add Post</div>-->
+            <div></div>
+            <div class="bottom_symbol" id="show_statistics" style="background-image: url('./images/bulb.jpg');"></div>
+            <div class="bottom_symbol" id="settings" style="background-image: url('./images/settings.png');"></div>
+        </div>
+        <!--Hier ist der Create Post Div Beitrag!!-->
+        <div class="createView" id="createView" style="display: none;">
+            <h2>📔 Neuer Eintrag</h2> <br><br>
+          
+            <form id="createForm">
+                <div class="new_post_go_back" id="post_go_back"></div>
+              <label for="title">Titel:</label>
+              <input type="text" id="title" name="title" required />
+              
+              <label for="color">Farbe:</label>
+              <input type="color" id="color" name="color" required />
+              
+              <br><br>
+          
+              <label for="date">Datum:</label>
+              <input type="date" id="date" name="date" required /><br><br>
+          
+              <label for="category">Hobby:</label>
+              <input type="text" id="category" name="category" /><br><br>
+          
+              <label for="tag">Tag:</label>
+              <input type="text" id="tag" name="tag" /><br><br>
+          
+              <label for="entry">Eintrag:</label><br>
+              <textarea id="entry" name="entry" rows="10"  placeholder="Was möchtest du schreiben?" style="width: 100%;"></textarea><br><br>
+          
+              <label for="image">Bild hinzufügen:</label><br><br>
+              <input type="file" id="image" name="image" accept="image/*" /><br><br>
+          
+              <button id="save" type="button">Speichern</button>
+            </form>
+          </div>
+        <div class="opened_post" id="opened_post" style="display: none;">post_feed
+            <div class="head">
+                <div class="opened_post_back_button" id="opened_post_back_button"></div>
+                <div class="opened_post_hobby" id="opened_post_hobby">Hobby</div>
+                <div class="menu">
+                    <div>star</div>
+                    <div id="edit_post" class="edit_post"></div>
+                    <div id="delete_post" class="delete_post" ></div>
+                </div>
+            </div>
+            <div class="post_body" id="post_body">
+                <div class="body_head">
+                    <div class="opened_post_date" id="opened_post_date">date</div>
+                    <div class="opened_post_info" id="opened_post_info">info</div>
+                </div>
+                <div class="opened_post_title" id="opened_post_title">title</div>
+                <div class="opened_post_text" id="opened_post_text">Text</div>
+            </div>
+        </div>
+        <div class="settings_view" id="settings_view" style="display: none;">
+            <div class="settings_back" id="settings_back" style="background-image: url('./images/back.png');"></div>
+            <div>Settings</div>
+            <div id="change_background_color">change_color</div>
+            <div>style</div>
+            <div class="save_backup" id="save_backup">save backup</div>
+            <div class="load_backup" id="load_backup">load backup</div>
+        </div>
+        <div id="statistics" class="statistics" style="display: none;">
+            Statistik
+            <div class="post_count" id="post_count">Anzahl Posts im letzten Jahr
+                <canvas id="hobbyChart" width="300" height="300"></canvas>
+            </div>
+            <div class="post_per_month" id="post_per_month">Posts pro Monat
+                <canvas id="month_Chart" width="400" height="200"></canvas>
+            </div>
+        </div>
+          <script src="post.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <script src="hobby_diary.js"></script>
+          
+    </body>
+</html>
