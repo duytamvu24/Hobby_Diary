@@ -7,3 +7,4 @@ Next Features:
 - Load Backup
 - See day in your post-feed
 - Improvement of UI
+- search function
