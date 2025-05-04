@@ -43,8 +43,9 @@ const getAllPostsFromDB = async () => {
 async function open_post(index){
     change_view("opened_post");
 
-    if(document.getElementById("post_image")) {
-        document.getElementById("post_image").remove();
+    if(document.getElementById("post_image_in_post")) {
+        document.getElementById("post_image_in_post").remove();
+        console.log("bild wurde entfernt");
     }
 
     const savedPosts = await getAllPostsFromDB();
@@ -69,7 +70,7 @@ async function open_post(index){
         image_div.style.paddingBottom = "56.25%";
         image_div.style.backgroundSize = "contain";
         image_div.style.backgroundRepeat = "no-repeat";
-        image_div.id = "post_image";
+        image_div.id = "post_image_in_post";
         image_div.style.marginBottom = "15px";
         // Füge das image_div zum Post-Body hinzu
         const post_body = document.getElementById("post_body");

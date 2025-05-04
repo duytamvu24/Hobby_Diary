@@ -2,6 +2,7 @@
     background-color: blue;
     display: flex;
     flex-direction: column;
+    padding-bottom: 80px;
 }
 
 .save_backup{
