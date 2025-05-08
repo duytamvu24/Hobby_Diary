@@ -1,16 +1,3 @@
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(registration => {
-          console.log('Service Worker registriert:', registration);
-        })
-        .catch(error => {
-          console.log('Service Worker Registrierung fehlgeschlagen:', error);
-        });
-    });
-  }
-
-
 const openDB = () => {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("MyDiaryApp", 1);
@@ -1118,16 +1105,27 @@ document.getElementById("bottom_add").addEventListener('click', change_create_po
 
 document.getElementById("post_go_back").addEventListener('click', post_back);
 
-const back_up_button = document.getElementById("load_backup").addEventListener("click", () =>{
+const back_up_button = document.getElementById("load_backup_div").addEventListener("click", () =>{
+    console.log("test");
+    const existingInput = document.getElementById("load_input_pop");
+    if (existingInput) {
+        existingInput.remove();
+        console.log("emtfernt");
+    }
+
     const settings_view = document.getElementById("settings_view");
     const fileInput = document.createElement('input');
+    fileInput.id = "load_input_pop";
     fileInput.type = 'file';
     fileInput.accept = 'application/json';
     settings_view.appendChild(fileInput);
-    fileInput.addEventListener('change', async () => {
-        const file = fileInput.files[0];
-        if (!file) return;
 
+    // Event-Listener hinzufügen
+    fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    try {
         const text = await file.text();
         const data = JSON.parse(text);
 
@@ -1140,14 +1138,21 @@ const back_up_button = document.getElementById("load_backup").addEventListener("
         // Neue Daten einfügen
         await Promise.all(data.posts.map(post => addToStore(db, 'posts', post)));
         await Promise.all(Object.entries(data.hobbyColors).map(
-            ([key, value]) => addToStore(db, 'hobbyColors', value, key)
-          ));
+        ([key, value]) => addToStore(db, 'hobbyColors', value, key)
+        ));
 
         alert("Backup erfolgreich wiederhergestellt!");
+    } catch (error) {
+        console.error("Fehler beim Wiederherstellen des Backups:", error);
+        alert("Beim Wiederherstellen des Backups ist ein Fehler aufgetreten.");
+    } finally {
+        // Input-Element entfernen, nachdem die Datei verarbeitet wurde
+        fileInput.remove();
+    }
     });
 });
 
-
+console.log("test");
 async function clearStore(db, storeName) {
     const tx = db.transaction(storeName, 'readwrite');
     await tx.objectStore(storeName).clear();

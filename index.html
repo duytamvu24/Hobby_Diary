@@ -2,16 +2,17 @@
 <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hobby Diary</title>
-        <link rel="manifest" href="manifest.json">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <link rel="stylesheet" href="menu.css">  <!--Das ist der wichtige Teil -->
         <link rel="stylesheet" href="post_feed.css">
         <link rel="stylesheet" href="create_post.css">
         <link rel="stylesheet" href="settings.css">
         <link rel="stylesheet" href="statistics.css">
         <link rel="stylesheet" href="calender_view.css">
+
 
     </head>
     <body style="background-color: rgba(190, 245, 240, 0.774);">
@@ -128,9 +129,18 @@
                 <button class="save_backup" id="save_backup">Save Backup</button>
             </div>
             <div class="load_backup" id="load_backup">
-                <button class="backup_div">Wähle Backup</button>
+                <button class="load_backup_div" id="load_backup_div">Wähle Backup</button>
                 <div class="backup_div">Lade ein Backup wieder ein! </div>
             </div>
+            <section class="contact">
+                <h2>Kontakt</h2>
+                <p>Du hast Vorschläge? Dann schreib mir gerne eine E-Mail!</p>
+                <p>
+                  <a href="mailto:duytamvu24@gmail.com">
+                    <i class="fas fa-envelope"></i> duytamvu24@gmail.com
+                  </a>
+                </p>
+              </section>
         </div>
         <div id="statistics" class="statistics" style="display: none;">
             Statistik
