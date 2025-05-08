@@ -2,25 +2,25 @@
 
 const CACHE_NAME = 'hobby-diary-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/calender_view.css',
-  '/create_post.css',
-  '/menu.css',
-  '/post_feed.css',
-  '/settings.css',
-  '/statistics.css',
-  '/hobby_diary.js',
-  '/post.js',
-  '/images/diary.jpg',
-  '/images/back.png',
-  '/images/bulb.jpg',
-  '/images/calen.webp',
-  '/images/calender_icon.jpg',
-  '/images/delete.png',
-  '/images/edit.png',
-  '/images/settings.png',
-  '/manifest.json'
+  './',
+  './index.html',
+  './calender_view.css',
+  './create_post.css',
+  './menu.css',
+  './post_feed.css',
+  './settings.css',
+  './statistics.css',
+  './hobby_diary.js',
+  './post.js',
+  './images/diary.jpg',
+  './images/back.png',
+  './images/bulb.jpg',
+  './images/calen.webp',
+  './images/calender_icon.jpg',
+  './images/delete.png',
+  './images/edit.png',
+  './images/settings.png',
+  './manifest.json'
 ];
 
 // Installationsereignis: Ressourcen cachen
