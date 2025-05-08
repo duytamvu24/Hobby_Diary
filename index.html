@@ -72,21 +72,21 @@
           
             <form id="createForm">
                 <div class="new_post_go_back" id="post_go_back"></div>
-              <label for="title">Titel:</label>
-              <input type="text" id="title" name="title" required />
+                <input type="text" id="category" name="category" /><br><br>
+                <input type="text" id="title" name="title" required />
+                
+                <div class="inline-group">
+                  <input type="date" id="date" name="date" required /><br><br>
+                </div>
+                <div class="form-row">
+                  <label for="farbe">Wähle eine Farbe:</label><br><br>
+                  <input type="color" id="color" name="color" value="#3ddad7" oninput="farbcode.value = this.value">
+                  <input type="text" id="farbcode" name="farbcode" readonly value="#3ddad7">
+                </div>
               
-              <label for="color">Farbe:</label>
-              <input type="color" id="color" name="color" required />
+          
               
-              <br><br>
           
-              <label for="date">Datum:</label>
-              <input type="date" id="date" name="date" required /><br><br>
-          
-              <label for="category">Hobby:</label>
-              <input type="text" id="category" name="category" /><br><br>
-          
-              <label for="tag">Tag:</label>
               <input type="text" id="tag" name="tag" /><br><br>
           
               <label for="entry">Eintrag:</label><br>
@@ -94,11 +94,13 @@
           
               <label for="image">Bild hinzufügen:</label><br><br>
               <input type="file" id="image" name="image" accept="image/*" /><br><br>
-          
-              <button id="save" type="button">Speichern</button>
+              <div style="text-align: center;">
+                <img id="imagePreview" style="max-width: 200px; display: none; margin: 5% auto;" />
+              </div>
+              <button class="save_button" id="save" type="button">Speichern</button>
             </form>
           </div>
-        <div class="opened_post" id="opened_post" style="display: none;">post_feed
+        <div class="opened_post" id="opened_post" style="display: none;">
             <div class="head">
                 <div class="opened_post_back_button" id="opened_post_back_button"></div>
                 <div class="opened_post_hobby" id="opened_post_hobby">Hobby</div>

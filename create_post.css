@@ -12,4 +12,93 @@
 .createView{
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 90px;
+    padding-top: 10px;
 }
+
+input, textarea, select {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #66d9e8;
+    box-shadow: 0 0 5px rgba(102, 217, 232, 0.5);
+  }
+
+  input[type="file"] {
+    border: none;
+    background: #f0f0f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+
+  .color_input{
+    height: 20%;
+  }
+
+  .inline-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .save_button{
+
+    background-color: #3ddad7;
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+  }
+ .save_button:hover {
+    background-color: #285fc6;
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: sans-serif;
+    line-height: 1.5;
+  }
+
+  input[type="color"] {
+    appearance: none; /* entfernt das Standard-Styling in manchen Browsern */
+    border: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    background: none;
+    box-shadow: 0 0 0 2px #ccc inset;
+    transition: box-shadow 0.2s;
+  }
+  
+  input[type="color"]:hover {
+    box-shadow: 0 0 0 2px #66d9e8 inset;
+  }
+
+  #farbcode {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px;
+    margin-left: 10px;
+    width: 80px;
+    font-family: monospace;
+  }

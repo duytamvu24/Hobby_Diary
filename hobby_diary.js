@@ -57,12 +57,12 @@ async function open_post(index){
     const hobby = opened_post.querySelector('.opened_post_hobby');
     hobby.textContent = post.hobby;
     const date = opened_post.querySelector('.opened_post_date');
-    date.textContent = post.date;
+    date.textContent = "Datum: " + post.date;
     const text = opened_post.querySelector('.opened_post_text');
     text.textContent = post.note;
     text.style.fontSize  = "25px";
     const info = opened_post.querySelector('.opened_post_info');
-    info.textContent = post.tag;
+    info.textContent = "Tag: " + post.tag;
     if(post.image){
         const image_div = document.createElement("div");
         image_div.style.backgroundImage = `url(${post.image})`; // Hintergrundbild setzen
@@ -72,7 +72,9 @@ async function open_post(index){
         image_div.style.backgroundSize = "contain";
         image_div.style.backgroundRepeat = "no-repeat";
         image_div.id = "post_image_in_post";
+        image_div.classList.add("post_image_in_post");
         image_div.style.marginBottom = "15px";
+        image_div.style.backgroundPosition = "center";
         // Füge das image_div zum Post-Body hinzu
         const post_body = document.getElementById("post_body");
         post_body.insertBefore(image_div, text);
@@ -113,10 +115,23 @@ async function create_new_post(index = null) {
 
     const savePost = async (imageDataUrl = null) => {
         const posts = await getAllPostsFromDB(); // <-- Erst ALLE Posts holen
-        const oldPost = posts[index];
-    
+        const oldPost = posts.find(p => p.id === index + 1);
         if (index != null && oldPost) {
-            const post = new Post(title, date, hobby, tag, entry, imageDataUrl, null, color);
+
+            if (imageInput.files && imageFile) {
+                // Neues Bild wurde ausgewählt – verwende es
+                const file = imageInput.files[0];
+                const reader = new FileReader();
+                imageDataUrl = await new Promise((resolve) => {
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                // Kein neues Bild – altes beibehalten
+                imageDataUrl = oldPost.image;
+            }
+            
+            const post = new Post(title, date, hobby, tag, entry, imageDataUrl, oldPost.id, color);
     
             const tx = db.transaction('posts', 'readwrite'); // <-- Dann Transaction starten
             const store = tx.objectStore('posts');
@@ -124,6 +139,7 @@ async function create_new_post(index = null) {
             // Key holen
             const key = await new Promise((resolve, reject) => {
                 const keyRequest = store.getKey(oldPost.id);
+                //console.log(oldPost.id);
                 keyRequest.onsuccess = () => resolve(keyRequest.result);
                 keyRequest.onerror = () => reject(keyRequest.error);
             });
@@ -134,7 +150,9 @@ async function create_new_post(index = null) {
                 updateRequest.onsuccess = () => resolve();
                 updateRequest.onerror = () => reject(updateRequest.error);
             });
-    
+
+            document.getElementById("imagePreview").style.display = "none";
+
             console.log('Eintrag wurde erfolgreich ersetzt.');
         } else {
             const post = new Post(title, date, hobby, tag, entry, imageDataUrl, null, color);
@@ -178,6 +196,22 @@ async function create_new_post(index = null) {
 }
 
 
+document.getElementById("image").addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const preview = document.getElementById("imagePreview");
+            preview.src = reader.result;
+            preview.style.display = "block";
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+
 function load_posts_on_start() {
     const getPost = async (index) => {
         const db = await openDB();
@@ -198,7 +232,7 @@ load_posts_on_start();
 
 function change_create_post(){
     change_view("createView");
-
+    document.getElementById("imagePreview").style.display = "none";
     // Textfelder mit alten Daten befüllen
     document.getElementById("title").placeholder = "Title";
     document.getElementById("title").value = "";
@@ -254,6 +288,7 @@ function change_create_post(){
 
 function post_back(){
     change_view("app");
+    document.getElementById("imagePreview").style.display = "none";
 }
 
 async function delete_post(postId){
@@ -298,7 +333,7 @@ async function delete_post(postId){
 
 async function edit_post(index){
     change_view("createView");
-
+    console.log("index", index);
     const savedPosts = await getAllPostsFromDB();
     const post = savedPosts.find(p => p.id === index + 1);
 
@@ -311,7 +346,8 @@ async function edit_post(index){
     document.getElementById("tag").value = post.tag;
     document.getElementById("color").value = post.color;
     const saveButton = document.getElementById("save");
-
+    document.getElementById("imagePreview").src = post.image;
+    document.getElementById("imagePreview").style.display = "block";
     // Entferne alte EventListener (indem wir onclick verwenden – einfach & sicher)
     saveButton.onclick = () => create_new_post(index);
     get_unique_hobbies();
@@ -947,7 +983,6 @@ document.getElementById("calendarPicker").addEventListener("change", (e) => {
 document.getElementById("category").addEventListener("input", async () => {
     const hobby = document.getElementById("category").value.trim().toLowerCase();
     const colorInput = document.getElementById("color");
-
     try {
         // Öffne die DB
         const db = await openDB(); // Stelle sicher, dass openDB() funktioniert (entsprechende Funktion implementiert)
@@ -965,10 +1000,10 @@ document.getElementById("category").addEventListener("input", async () => {
         });
 
         // Wenn eine Farbe gefunden wurde, setze sie im colorInput
-        if (color) {
-            colorInput.value = color; // Setze bekannte Farbe
+        if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
+            colorInput.value = color;
         } else {
-            colorInput.value = ""; // Setze Farbe zurück, wenn Hobby nicht gefunden wird
+            colorInput.value = "#000000"; // Fallback auf Schwarz oder Standard
         }
     } catch (error) {
         console.error("Fehler beim Abrufen der Farbe:", error);
