@@ -2,7 +2,7 @@
     "name": "My Hobby Diary",
     "short_name": "HobbyDiary",
     "description": "Track your hobbies and remember your progress of each hobby!",
-    "start_url": "/index.html",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
