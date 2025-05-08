@@ -42,13 +42,13 @@
 
 .add_post {
   position: absolute;
-  top: -40px; /* ragt nach oben */
+  top: -30px; /* ragt nach oben */
   left: 50%;
   transform: translateX(-50%); /* zentriert horizontal */
   font-size: 100px;
   color: black;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   background-color: rgb(161, 248, 248);
   border-radius: 50%;
   display: flex;

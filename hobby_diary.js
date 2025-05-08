@@ -595,12 +595,13 @@ async function show_calender_ovewview(heute = new Date()){
         tag_content.textContent = tag;
         tagDiv.appendChild(tag_content);
         tagDiv.id = `${tag}_${aktuellerMonat}_${aktuellesJahr}`;
-        tagDiv.style.height = "12vh";
+        tagDiv.style.height = "8vh";
+        tagDiv.style.width = "13vw"
         tagDiv.style.padding = "3% 3% 3% 3%";
         tagDiv.style.flex = "1"; // Tippfehler: "widows" -> richtig "width"
         tagDiv.style.alignItems = "center"; 
         tagDiv.style.justifyContent = "center"; 
-        tagDiv.style.margin = "3% 0 3% 0";
+        tagDiv.style.margin = "2% 0 2% 0";
         calender.appendChild(tagDiv);
 
     }
