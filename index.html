@@ -4,11 +4,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hobby Diary</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="menu.css">  <!--Das ist der wichtige Teil -->
         <link rel="stylesheet" href="post_feed.css">
         <link rel="stylesheet" href="create_post.css">
         <link rel="stylesheet" href="settings.css">
         <link rel="stylesheet" href="statistics.css">
+        <link rel="stylesheet" href="calender_view.css">
+
     </head>
     <body style="background-color: rgba(190, 245, 240, 0.774);">
         <div class="app" id="app" style="display: block;">
@@ -27,23 +30,23 @@
                     <input type="date" id="calendarPicker" style="display: none;">
                 </div>
                 <div class="days">
-                    <div class="day">
+                    <div class="day" id="day_top_1">
                         <div>Tag</div>
                         <div>Zahl</div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="day_top_2">
                         <div>Tag</div>
                         <div>Zahl</div>
                     </div>
-                    <div class="day">
+                    <div class="day" id="day_top_3">
+                        <div id="current_day_for_post">Tag</div>
+                        <div>Zahl</div>
+                    </div>
+                    <div class="day" id="day_top_4">
                         <div>Tag</div>
                         <div>Zahl</div>
                     </div>
-                    <div class="day">
-                        <div>Tag</div>
-                        <div>Zahl</div>
-                    </div>
-                    <div class="day">
+                    <div class="day" id="day_top_5">
                         <div>Tag</div>
                         <div>Zahl</div>
                     </div>
@@ -115,12 +118,16 @@
             </div>
         </div>
         <div class="settings_view" id="settings_view" style="display: none;">
-            <div class="settings_back" id="settings_back" style="background-image: url('./images/back.png');"></div>
-            <div>Settings</div>
-            <div id="change_background_color">change_color</div>
-            <div>style</div>
-            <div class="save_backup" id="save_backup">save backup</div>
-            <div class="load_backup" id="load_backup">load backup</div>
+            <!--<div class="settings_back" id="settings_back" style="background-image: url('./images/back.png');"></div>-->
+            <div style="font-size: 250%;">Settings</div>
+            <!--<div id="change_background_color">change_color</div>-->
+            <div class="save_backup_div" id="save_backup_div">
+                <button class="save_backup" id="save_backup">Save Backup</button>
+            </div>
+            <div class="load_backup" id="load_backup">
+                <button class="backup_div">Wähle Backup</button>
+                <div class="backup_div">Lade ein Backup wieder ein! </div>
+            </div>
         </div>
         <div id="statistics" class="statistics" style="display: none;">
             Statistik

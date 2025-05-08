@@ -49,7 +49,8 @@ async function open_post(index){
     }
 
     const savedPosts = await getAllPostsFromDB();
-    const post = savedPosts[index];
+    const post = savedPosts.find(p => p.id === index + 1);
+    console.log(post);
     const title = opened_post.querySelector('.opened_post_title');
     title.textContent = post.title;
     title.style.fontSize  = "30px";
@@ -76,7 +77,7 @@ async function open_post(index){
         const post_body = document.getElementById("post_body");
         post_body.insertBefore(image_div, text);
     }
-    
+    console.log("index aus funktion übergeben", index);
 
     // Edit Button ersetzen
     const oldEditBtn = document.getElementById("edit_post");
@@ -122,7 +123,6 @@ async function create_new_post(index = null) {
     
             // Key holen
             const key = await new Promise((resolve, reject) => {
-                console.log(oldPost);
                 const keyRequest = store.getKey(oldPost.id);
                 keyRequest.onsuccess = () => resolve(keyRequest.result);
                 keyRequest.onerror = () => reject(keyRequest.error);
@@ -204,8 +204,44 @@ function change_create_post(){
     document.getElementById("title").value = "";
     document.getElementById("category").placeholder = "Hobby";
     document.getElementById("category").value = "";
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("date").value = today;
+    let calender_date = document.getElementById("current_day_for_post");
+    calender_date = calender_date.textContent;
+    //const today = new Date().toISOString().split('T')[0];
+
+    // Schritt 1: Tag und Monatsname extrahieren
+    const [tagStr, monatStr] = calender_date.split('.')[0].split(' ');
+    const tag = parseInt(calender_date); // 8
+    const monatNamen = {
+    Januar: '01',
+    Februar: '02',
+    März: '03',
+    April: '04',
+    Mai: '05',
+    Juni: '06',
+    Juli: '07',
+    August: '08',
+    September: '09',
+    Oktober: '10',
+    November: '11',
+    Dezember: '12'
+    };
+
+    // "Mai" aus dem Text extrahieren
+    const monat = Object.keys(monatNamen).find(m => calender_date.includes(m));
+    const monatNummer = monatNamen[monat];
+
+    // Aktuelles Jahr verwenden
+    const jahr = new Date().getFullYear();
+
+    // Zwei Ziffern für den Tag
+    const tagZweiStellig = tag.toString().padStart(2, '0');
+
+    // Ergebnis:
+    const isoDatum = `${jahr}-${monatNummer}-${tagZweiStellig}`;
+
+    console.log("heute_post",isoDatum);  // z.B. "2025-05-08"
+
+    document.getElementById("date").value = isoDatum;
     document.getElementById("entry").placeholder = "Schreibe deinen Eintrag";
     document.getElementById("entry").value = "";
     document.getElementById("tag").placeholder = "Tag";
@@ -220,7 +256,7 @@ function post_back(){
     change_view("app");
 }
 
-async function delete_post(index){
+async function delete_post(postId){
     const delete_confirmation = document.createElement("div");
     const delete_question = document.createElement("div");
     const yes_div = document.createElement("div");
@@ -229,42 +265,22 @@ async function delete_post(index){
     delete_question.textContent = "Willst du den Post wirklich löschen?";
     yes_div.textContent = "Ja";
     no_div.textContent = "Nein";
-    yes_div.addEventListener('click', async() => {
-        
-        const db = await openDB(); // Öffne die IndexedDB
-        const tx = db.transaction('posts', 'readwrite'); // Transaktion im 'readwrite' Modus
+    yes_div.addEventListener('click', async () => {
+        const db = await openDB();
+        const tx = db.transaction('posts', 'readwrite');
         const store = tx.objectStore('posts');
 
-        // Alle Posts abrufen
-        const posts = await new Promise((resolve, reject) => {
-            const request = store.getAll(); // Alle Posts abrufen
-            request.onsuccess = () => resolve(request.result); // Erfolgsfall: Alle Posts zurückgeben
-            request.onerror = () => reject('Fehler beim Abrufen der Posts'); // Fehlerfall
-        });
-
-        // Schritt 2: Entferne den Post mit dem gegebenen Index
-        if (posts.length > index) {
-            posts.splice(index, 1); // Entferne den Post aus dem Array
-        }
-
-        // Schritt 3: Speichere die neue Liste wieder in der IndexedDB
-        // Lösche alle Posts und füge die neue Liste wieder hinzu
-        const clearRequest = store.clear(); // Lösche alle Posts im Store
-        clearRequest.onsuccess = () => {
-            posts.forEach(post => {
-                store.add(post); // Füge alle verbleibenden Posts wieder hinzu
-            });
-
-            console.log('Post wurde erfolgreich gelöscht und die Liste aktualisiert.');
+        const deleteRequest = store.delete(postId + 1);
+        deleteRequest.onsuccess = () => {
+            console.log('Post erfolgreich gelöscht.');
+            change_view("app");
+            filter_by_selection();
         };
-        clearRequest.onerror = (e) => {
-            console.error('Fehler beim Löschen der Posts:', e);
+        deleteRequest.onerror = () => {
+            console.error('Fehler beim Löschen des Posts');
         };
 
-        // Bestätigungsnachricht entfernen
         delete_confirmation.remove();
-        change_view("app");
-        filter_by_selection();
     });
     no_div.addEventListener('click', () => {
         // Bestätigungsnachricht entfernen
@@ -284,7 +300,7 @@ async function edit_post(index){
     change_view("createView");
 
     const savedPosts = await getAllPostsFromDB();
-    const post = savedPosts[index];
+    const post = savedPosts.find(p => p.id === index + 1);
 
 
     // Textfelder mit alten Daten befüllen
@@ -293,7 +309,7 @@ async function edit_post(index){
     document.getElementById("date").value = post.date;
     document.getElementById("entry").value = post.note;
     document.getElementById("tag").value = post.tag;
-
+    document.getElementById("color").value = post.color;
     const saveButton = document.getElementById("save");
 
     // Entferne alte EventListener (indem wir onclick verwenden – einfach & sicher)
@@ -307,8 +323,6 @@ async function get_unique_hobbies() {
     const allPosts = await getAllPostsFromDB();
     const allHobbies = allPosts.map(post => post.hobby);
     const uniqueHobbies = [...new Set(allHobbies)];
-    console.log(uniqueHobbies);
-
     const dropdown = document.getElementById("hobbyDropdown");
     dropdown.innerHTML = ""; // 🔥 alle alten Optionen entfernen
 
@@ -362,7 +376,6 @@ async function filter_by_selection(e = null) {
         console.log(centralText);
         const day = parseInt(dayStr);
         const monthName = monthStr.trim();
-        console.log(day, monthName);
         const months = {
             "Januar": 0,
             "Februar": 1,
@@ -400,40 +413,46 @@ async function filter_by_selection(e = null) {
         post_entry.style.gridTemplateColumns = "1fr 1fr";
         let post_title = document.createElement("div");
         let post_hobby = document.createElement("div");
+        let post_datum  = document.createElement("div");
+        let post_tag = document.createElement("div");
         let post_index = post.id -1;
         console.log(post_index);
         //let post_index = post.index;
         //console.log(post_index);
         post_title.textContent = post.title;
-        post_title.style.fontSize = "20px";
+        post_title.style.fontSize = "150%";
         post_title.style.fontStyle = "bold";
         post_title.style.marginBottom = "10px";
         post_title.style.fontWeight = "bold"
         post_hobby.textContent = post.hobby;
         post_hobby.style.marginBottom = "10px";
+        post_datum.textContent = post.date;
+        post_datum.style.margin = "0% 0% 1% 0%";
+        post_tag.textContent = "Tag: " + post.tag;
         let post_text_preview = document.createElement("div");
         post_text_preview.appendChild(post_title);
         post_text_preview.appendChild(post_hobby);
+        post_text_preview.appendChild(post_datum);
+        post_text_preview.appendChild(post_tag);
         post_entry.appendChild(post_text_preview);
         post_entry.id = "post_id_" + post_index;
         post_entry.dataset.index = post_index;
         post_entry.classList.add("post");
         post_entry.style.borderRadius = "20px";
         post_entry.style.pointerEvents = 'pointer';
-        post_entry.style.padding = "10px 5px 10px 5px"
-        console.log(post_index);
+        post_entry.style.padding = "1% 3% 1% 3%"
         post_entry.addEventListener('click', () => open_post(post_index));
 
         // falls es ein Bild gibt zeige es
         if(post.image){
             const image_div = document.createElement("div");
-            console.log("bild hier");
             image_div.style.backgroundImage = `url(${post.image})`; // Hintergrundbild setzen
             // Hier könntest du auch weitere Stile hinzufügen, um das Div anzupassen
             image_div.style.width = "100%";
-            image_div.style.height = "100px"
+            image_div.style.height = "90%"
             image_div.style.backgroundSize = "contain";
             image_div.style.backgroundRepeat = "no-repeat";
+            image_div.style.backgroundPosition = "center";
             image_div.id = "post_image";
             image_div.style.marginBottom = "15px";
             post_entry.appendChild(image_div);
@@ -491,12 +510,14 @@ async function show_calender_ovewview(heute = new Date()){
 
     const calender_head = document.createElement("div");
     calender_head.id = "calender_head";
-    calender_head.style.display="grid";
-    calender_head.style.gridTemplateColumns = "1fr 1fr 1fr";
+    
+    calender_head.classList.add("calender_head")
     const left_arrow = document.createElement("div");
     const right_arrow = document.createElement("div");
     left_arrow.textContent = "<";
+    left_arrow.classList.add("arrow_text")
     right_arrow.textContent = ">";
+    right_arrow.classList.add("arrow_text")
     left_arrow.addEventListener("click", () => {
         const previousMonth = new Date(heute.getFullYear(), heute.getMonth() - 1, 1);
         show_calender_ovewview(previousMonth);
@@ -505,21 +526,17 @@ async function show_calender_ovewview(heute = new Date()){
         const previousMonth = new Date(heute.getFullYear(), heute.getMonth() + 1, 1);
         show_calender_ovewview(previousMonth);
     });
-    calender_head.appendChild(left_arrow);
-
+    
+    
 
     const month_name = month_names[aktuellerMonat];
-    console.log(month_name);
     const month_year = document.createElement("div");
     month_year.textContent = `${month_name} ${aktuellesJahr}`;
+    month_year.classList.add("month_text");
+    calender_head.appendChild(left_arrow);
     calender_head.appendChild(month_year);
     calender_head.appendChild(right_arrow);
-    calender_head.style.marginLeft = "3px";
-    calender_head.style.marginRight = "3px";
-    calender_head.style.marginTop = "5px";
-    calender_head.style.marginBottom = "5px";
     document.body.appendChild(calender_head);
-
     const calender = document.createElement("div");
     calender.id = "calender_view";
     calender.style.display = "grid"; // Korrektur: display gehört zu style, nicht calender direkt
@@ -531,6 +548,7 @@ async function show_calender_ovewview(heute = new Date()){
     const days = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
     for(const day of days){
         	const day_name = document.createElement("div");
+            day_name.classList.add("day_names");
             day_name.textContent = day;
             day_name.style.textAlign = "center"; // Text zentrieren
             day_name.style.fontWeight = "bold"; 
@@ -539,6 +557,7 @@ async function show_calender_ovewview(heute = new Date()){
 
     for (let i = 0; i < ersterTagImMonat; i++){
         const empty_div = document.createElement("div");
+        empty_div.classList.add("day_grid");
         calender.appendChild(empty_div);
     }
 
@@ -558,8 +577,7 @@ async function show_calender_ovewview(heute = new Date()){
         ){
             tagDiv.style.borderStyle = "solid";
             tagDiv.style.borderColor = "blue";
-            tagDiv.style.borderWidth = "4px";
-            console.log("today");
+            tagDiv.style.borderWidth = "2px";
         }
         tagDiv.addEventListener("click", () =>{
             document.getElementById("createView").style.display = "none";
@@ -577,10 +595,12 @@ async function show_calender_ovewview(heute = new Date()){
         tag_content.textContent = tag;
         tagDiv.appendChild(tag_content);
         tagDiv.id = `${tag}_${aktuellerMonat}_${aktuellesJahr}`;
-        tagDiv.style.height = "80px";
+        tagDiv.style.height = "12vh";
+        tagDiv.style.padding = "3% 3% 3% 3%";
         tagDiv.style.flex = "1"; // Tippfehler: "widows" -> richtig "width"
         tagDiv.style.alignItems = "center"; 
         tagDiv.style.justifyContent = "center"; 
+        tagDiv.style.margin = "3% 0 3% 0";
         calender.appendChild(tagDiv);
 
     }
@@ -589,7 +609,6 @@ async function show_calender_ovewview(heute = new Date()){
     
     for (let post of existingPosts){
         const datum = new Date(post.date);
-        console.log(datum);
         const post_day = datum.getDate();
         const post_month = datum.getMonth();
         const post_year = datum.getFullYear();
@@ -602,6 +621,12 @@ async function show_calender_ovewview(heute = new Date()){
             new_hobby.style.borderStyle = "solid";
             new_hobby.style.borderWidth = "1px";
             new_hobby.style.borderColor = "black";
+            new_hobby.style.borderRadius = "5%";
+            new_hobby.style.display = "-webkit-box";
+            new_hobby.style.webkitLineClamp = "2";
+            new_hobby.style.overflow = "hidden";
+            new_hobby.style.textOverflow = "ellipsis";
+            new_hobby.textContent = post.title;
             new_hobby.style.flex = "1";
             new_hobby.style.width = "90%";
             new_hobby.style.flex = "1";
@@ -667,8 +692,6 @@ async function fillDays(centerDate = null) {
                     new_hobby.style.flex = "1";
                     new_hobby.id = "fill_days_posts";
                     zahlDiv.appendChild(new_hobby);
-                    console.log(datum);
-                    console.log("hier ist was");
                 }
             }
 
@@ -792,7 +815,6 @@ async function open_statistics() {
             }
         }
     });
-    console.log(posts_month);
     for(let hobby of uniqueHobbies){
         let hobby_dict = {label: hobby};
         let counts = [];
@@ -810,7 +832,6 @@ async function open_statistics() {
                 request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject('Fehler beim Abrufen der Farbe');
             });
-            //console.log(hobby, color);
             hobby_dict["backgroundColor"] = color;
         } catch (error) {
             console.error("Fehler beim Abrufen der Farbe:", error);
@@ -850,7 +871,6 @@ async function open_statistics() {
 }
 
 async function posts_per_month(year = (new Date().getFullYear())) {
-    console.log(year);
     const db = await getAllPostsFromDB();
     //Zählt Hobbies für jeden Monat
     const hobbies_per_month = {};
@@ -861,7 +881,6 @@ async function posts_per_month(year = (new Date().getFullYear())) {
         console.log(monthName);
         hobbies_per_month[monthName] = []; // oder z. B. 0, [] oder "" als Startwert
     }
-    console.log(hobbies_per_month);
     for (let post of db){
         let date = post.date;
         date = new Date(date);
@@ -872,7 +891,6 @@ async function posts_per_month(year = (new Date().getFullYear())) {
             hobbies_per_month[monthName].push(post);
         }
     }
-    console.log(hobbies_per_month);
     return hobbies_per_month;
     //console.log(hobbies_per_month);
 }
@@ -890,7 +908,6 @@ async function count_posts_per_hobby() {
             count_hobbies[post.hobby] = 1;
         }
     }
-    console.log(count_hobbies);
     return count_hobbies;
 }
 
@@ -924,9 +941,7 @@ document.getElementById("calendarPicker").addEventListener("change", (e) => {
     fillDays(selectedDate);
 });
 
-document.getElementById("settings_back").addEventListener("click", () =>{
-    change_view("app");
-});
+
 
 document.getElementById("category").addEventListener("input", async () => {
     const hobby = document.getElementById("category").value.trim().toLowerCase();
@@ -938,8 +953,9 @@ document.getElementById("category").addEventListener("input", async () => {
 
         // Transaction starten
         const colorTx = db.transaction('hobbyColors', 'readonly');
+        
         const colorStore = colorTx.objectStore('hobbyColors');
-
+        console.log(colorStore);
         // Hole die Farbe aus der DB
         const color = await new Promise((resolve, reject) => {
             const request = colorStore.get(hobby);  // Hole die Farbe für das Hobby
@@ -970,13 +986,36 @@ function getAllFromStore(db, storeName) {
     });
   }
 
+
+  function getAllKeyValuePairsFromStore(db, storeName) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, 'readonly');
+      const store = tx.objectStore(storeName);
+      const result = {};
+  
+      const request = store.openCursor();
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          result[cursor.key] = cursor.value;
+          cursor.continue();
+        } else {
+          resolve(result);
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
 async function ask_save_backup(){
     console.log("Willst du deine Daten als Download speichern?");
     const save_question = document.createElement("div");
-    const yes_div = document.createElement("div");
-    const no_div = document.createElement("div");
-
-    save_question.textContent = "Willst du deine Daten als Donwload speichern?";
+    const yes_div = document.createElement("button");
+    const no_div = document.createElement("button");
+    yes_div.style.margin = "1% 3% 1% 3%";
+    no_div.style.margin = "1% 3% 1% 3%";
+    save_question.textContent = "Daten als Donwload speichern?";
+    save_question.style.padding = "1% 3% 1% 3%";
     yes_div.textContent = "Ja";
     no_div.textContent = "Nein";
     yes_div.addEventListener('click', async() => {
@@ -984,7 +1023,7 @@ async function ask_save_backup(){
         console.log("speichern");
 
         const posts = await getAllFromStore(db, 'posts');
-        const hobbyColors = await getAllFromStore(db, 'hobbyColors');
+        const hobbyColors = await getAllKeyValuePairsFromStore(db, 'hobbyColors');
 
         const data = {
             posts,
@@ -1009,9 +1048,14 @@ async function ask_save_backup(){
         // Bestätigungsnachricht entfernen
         save_question.remove();
     });
-    const save_backup_div = document.getElementById("settings_view");
-    save_question.appendChild(yes_div);
-    save_question.appendChild(no_div);
+    const save_backup_div = document.getElementById("save_backup_div");
+    const yes_no_div = document.createElement("div");
+    yes_no_div.style.padding = "1% 3% 1% 3%";
+    yes_no_div.style.display = "grid";
+    yes_no_div.style.gridTemplateColumns = "1fr 1fr";
+    yes_no_div.appendChild(yes_div);
+    yes_no_div.appendChild(no_div);
+    save_question.appendChild(yes_no_div);
     save_backup_div.appendChild(save_question);
 }
 
@@ -1024,53 +1068,49 @@ document.getElementById("opened_post_back_button").addEventListener('click', pos
 document.getElementById("bottom_add").addEventListener('click', change_create_post);
 
 document.getElementById("post_go_back").addEventListener('click', post_back);
-document.getElementById("change_background_color").addEventListener("click", () => {
-    // Container für Farbauswahl
-    const overlay = document.createElement("div");
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
-    overlay.style.display = "flex";
-    overlay.style.flexDirection = "column";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-    overlay.style.zIndex = "10000";
 
-    // Farbwähler
-    const colorPicker = document.createElement("input");
-    colorPicker.type = "color";
-    colorPicker.value = "#ffffff";
-    colorPicker.style.marginBottom = "10px";
+const back_up_button = document.getElementById("load_backup").addEventListener("click", () =>{
+    const settings_view = document.getElementById("settings_view");
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+    settings_view.appendChild(fileInput);
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
 
-    // Bestätigungsbutton
-    const confirmBtn = document.createElement("button");
-    confirmBtn.textContent = "Bestätigen";
-    confirmBtn.style.padding = "10px 20px";
-    confirmBtn.style.fontSize = "16px";
-    confirmBtn.style.cursor = "pointer";
+        const text = await file.text();
+        const data = JSON.parse(text);
 
-    // Bei Klick: Hintergrundfarbe setzen
-    confirmBtn.addEventListener("click", async() => {
-        document.body.style.backgroundColor = colorPicker.value;
+        const db = await openDB();
 
-        const selectedColor = colorPicker.value;
-        document.body.style.backgroundColor = selectedColor;
-        // Farbe speichern
-        localStorage.setItem("backgroundColor", selectedColor);
-        // Farbe anwenden
-        document.body.style.backgroundColor = selectedColor;
-        document.body.removeChild(overlay); // Farbauswahl schließen
+        // Optional: alte Daten löschen
+        await clearStore(db, 'posts');
+        await clearStore(db, 'hobbyColors');
+
+        // Neue Daten einfügen
+        await Promise.all(data.posts.map(post => addToStore(db, 'posts', post)));
+        await Promise.all(Object.entries(data.hobbyColors).map(
+            ([key, value]) => addToStore(db, 'hobbyColors', value, key)
+          ));
+
+        alert("Backup erfolgreich wiederhergestellt!");
     });
-
-    overlay.appendChild(colorPicker);
-    overlay.appendChild(confirmBtn);
-    document.body.appendChild(overlay);
 });
 
 
+async function clearStore(db, storeName) {
+    const tx = db.transaction(storeName, 'readwrite');
+    await tx.objectStore(storeName).clear();
+    await tx.done;
+}
+
+async function addToStore(db, storeName, item, key = undefined) {
+    const tx = db.transaction(storeName, 'readwrite');
+    const store = tx.objectStore(storeName);
+    key !== undefined ? store.put(item, key) : store.put(item);
+    await tx.done;
+}
 
 
 const deleteDB = (dbName) => {
@@ -1088,6 +1128,39 @@ const deleteDB = (dbName) => {
         console.warn(`Die Datenbank ${dbName} konnte nicht gelöscht werden, da sie von anderen Fenstern/Tabellen verwendet wird.`);
     };
 };
+
+async function logAllHobbyColors() {
+    const db = await openDB();
+    const tx = db.transaction('hobbyColors', 'readonly');
+    const store = tx.objectStore('hobbyColors');
+
+    const request = store.openCursor();
+
+    request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+            console.log(`Key: ${cursor.key}, Value: ${cursor.value}`);
+            cursor.continue();
+        } else {
+            console.log('Alle hobbyColors wurden angezeigt.');
+        }
+    };
+
+    request.onerror = () => {
+        console.error('Fehler beim Durchlaufen von hobbyColors:', request.error);
+    };
+}
+
+logAllHobbyColors();
+
+
+function getFromStore(store, key) {
+    return new Promise((resolve, reject) => {
+        const request = store.get(key);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
 
 // Beispielaufruf, um die "MyDiaryApp"-Datenbank zu löschen:
 //deleteDB("MyDiaryApp");

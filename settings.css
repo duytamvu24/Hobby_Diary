@@ -1,27 +1,42 @@
 .settings_view{
-    background-color: blue;
+    background-color: rgba(0, 0, 255, 0);
     display: flex;
     flex-direction: column;
-    padding-bottom: 80px;
+    padding: 5% 80px 3% 3%;
+}
+
+.save_backup_div{
+    height: 10vh;
+    width: 100%;
+    background-color: rgba(240, 248, 255, 0);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3% 3% 3% 3%;
 }
 
 .save_backup{
-    height: 100px;
-    width: 100%;
-    background-color: aliceblue;
+    border-style: solid;
+    border-radius: 3%;
+    border-width: 3%;
+    border-color: black;
 }
 
 .load_backup{
-    height: 100px;
+    height: 8vh;
     width: 100%;
-    background-color: aliceblue;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 5% 2% 5% 2%;
 }
 
 .settings_back{
-    background-color: aqua;
     height: 100px;
     width: 100%;
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.backup_div{
+    padding: 3% 3% 3% 3%;
 }

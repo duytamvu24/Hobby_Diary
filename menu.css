@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
   }
 
 .app{
@@ -60,14 +61,20 @@
 }
 
 .bottom_symbol{
-  width: 100%;
-  height: 100%;
+  width: 85%;
+  height: 85%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   border-style: solid;
   border-radius: 3px;
+  background-color: transparent;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.103);
   /*border-color: rgba(0, 0, 0, 0.315);*/
+}
+
+.button:hover {
+  background-color: #3a7ad9;
 }
 
 .menu{
@@ -100,7 +107,9 @@
     padding-right: 3px;
     border-style: solid;
     border-color: rgb(0, 0, 0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.616);
     border-width: 2px;
+    border-radius: 10%;
     display: grid;
     justify-content: center;   /* horizontal zentrieren */
     align-items: center;       /* vertikal zentrieren */
@@ -130,6 +139,8 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
   }
 
@@ -147,10 +158,11 @@
     background-color: rgb(22, 59, 59);
     border-style: solid;
     border-color: black;
-    /*border-radius: 5%;*/
+    border-radius: 5%;
     border-width: 2px;
     margin: 5px 5px 5px 5px;
     overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.616);
 }
 
 .new_post_go_back{
@@ -165,3 +177,10 @@
   padding-right: 5px;
 }
 
+.hobbyDropdown{
+  border-style: solid;
+  border-width: 1%;
+  border-color: black;
+  border-radius: 6%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.26);
+}

@@ -1,0 +1,20 @@
+.calender_head{
+    padding: 5% 5% 5% 5%;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.arrow_text {
+    font-size: 180%;
+    font-weight: bold;     /* oder eine Zahl: 600, 700, etc. */
+}
+
+.month_text{
+    font-size: 180%;
+}
+
+.day_names{
+    margin-bottom: 5%;
+    font-size: 140%;
+}
